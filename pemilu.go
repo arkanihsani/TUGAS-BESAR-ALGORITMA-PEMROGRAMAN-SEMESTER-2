@@ -26,6 +26,7 @@ func main() {
 	lp[1].no, lp[1].partai, lp[1].nama, lp[1].vot = 2, "Gerindra", "Prabowo", 54362
 	lp[2].no, lp[2].partai, lp[2].nama, lp[2].vot = 3, "PDIP", "Ganjar", 14533
 	nCaleg := 3
+	clearScreen()
 	for milih != 3 {
 		menu_utama(&milih)
 		if milih == 1 {
@@ -46,15 +47,21 @@ func main() {
 			for {
 				menu_pemilih(&pil)
 				if pil == 1 {
-					menu_daftar(&nCaleg, &lp, &pil1)
-					if pil1 == 1 {
-						sortpartai(nCaleg, &lp, &la)
-						cetakData(nCaleg, la)
-					} else if pil1 == 2 {
-						cetakData(nCaleg, lp)
-					} else if pil1 == 3 {
-						urutturunvoting(nCaleg, &lp, &la)
-						cetakData(nCaleg, la)
+					for {
+						menu_daftar(&pil1)
+						if pil1 == 1 {
+
+						} else if pil1 == 2 {
+							cetakData(nCaleg, lp)
+						} else if pil1 == 3 {
+							sortpartai(nCaleg, &lp, &la)
+							cetakData(nCaleg, la)
+						} else if pil1 == 4 {
+							urutvoting(nCaleg, &lp, &la)
+							cetakData(nCaleg, la)
+						} else if pil1 == 5 {
+							break
+						}
 					}
 				} else if pil == 3 {
 					break
@@ -78,6 +85,7 @@ func menu_login() bool {
 	for cek == false {
 		fmt.Println("Inputkan Username dan Password")
 		fmt.Scan(&user, &pw)
+		clearScreen()
 		if user == "admin" && pw == "admin" {
 			cek = true
 		} else {
@@ -85,11 +93,13 @@ func menu_login() bool {
 			fmt.Println("1. Yes")
 			fmt.Println("2. No")
 			fmt.Scan(&pil)
+			clearScreen()
 		}
 		if pil == 2 {
 			break
 		}
 	}
+	clearScreen()
 	return cek
 }
 
@@ -102,6 +112,7 @@ func menu_utama(p *int) {
 		fmt.Println("3. Exit")
 		fmt.Print("Pilih 1/2/3? ")
 		fmt.Scan(p)
+		clearScreen()
 		if *p != 1 && *p != 2 && *p != 3 {
 			fmt.Println("Jawaban Tidak Valid!")
 		}
@@ -118,7 +129,8 @@ func menu_petugas(p *int) {
 		fmt.Println("3. Penghapusan")
 		fmt.Println("4. Exit")
 		fmt.Print("Pilih 1/2/3/4? ")
-		fmt.Scan(&*p)
+		fmt.Scan(p)
+		clearScreen()
 		if *p != 1 && *p != 2 && *p != 3 && *p != 4 {
 			fmt.Println("Jawaban Tidak Valid!")
 		}
@@ -135,6 +147,7 @@ func menu_pemilih(p *int) {
 		fmt.Println("3. Exit")
 		fmt.Print("Pilih 1/2/3? ")
 		fmt.Scan(p)
+		clearScreen()
 		if *p != 1 && *p != 2 && *p != 3 {
 			fmt.Println("Jawaban Tidak Valid!")
 		}
@@ -142,15 +155,23 @@ func menu_pemilih(p *int) {
 	clearScreen()
 }
 
-func menu_daftar(nCal *int, li *listPemilu, pil *int) {
-	fmt.Println("Daftar Calon Legislatif :")
-	cetakData(*nCal, *li)
-	fmt.Println("MENU")
-	fmt.Println("1. Pencarian Spesifik.")
-	fmt.Println("2. Urutkan Berdasarkan Nomor Urut")
-	fmt.Println("3. Urutkan Berdasarkan Jumlah Pemungutan Suara")
-	fmt.Println("Pilih 1/2/3? ")
-	fmt.Scan(&*pil)
+func menu_daftar(pil *int) {
+	*pil = 0
+	for *pil != 1 && *pil != 2 && *pil != 3 && *pil != 4 && *pil != 5 {
+		fmt.Println("MENU")
+		fmt.Println("1. Pencarian Spesifik.")
+		fmt.Println("2. Urutkan Berdasarkan Nomor Urut")
+		fmt.Println("3. Urutkan Berdasarkan Partai")
+		fmt.Println("4. Urutkan Berdasarkan Jumlah Pemungutan Suara")
+		fmt.Println("5. Exit.")
+		fmt.Println("Pilih 1/2/3/4/5? ")
+		fmt.Scan(&*pil)
+		if *pil != 1 && *pil != 2 && *pil != 3 && *pil != 4 && *pil != 5 {
+			fmt.Println("Jawaban Tidak Valid!")
+		}
+		clearScreen()
+	}
+	clearScreen()
 }
 
 func menu_voting(nCal *int, li *listPemilu) {
@@ -177,23 +198,6 @@ func menu_voting(nCal *int, li *listPemilu) {
 	}
 }
 
-func sortpartai(nCal int, li, lu *listPemilu) {
-	for i := 0; i < nCal; i++ {
-		lu[i].no, lu[i].partai, lu[i].nama, lu[i].vot = li[i].no, li[i].partai, li[i].nama, li[i].vot
-	}
-	for i := 1; i < nCal; i++ {
-		idxMin := i - 1
-		for j := i; j < nCal; j++ {
-			if lu[idxMin].partai > lu[j].partai {
-				idxMin = j
-			}
-		}
-		temp := lu[idxMin]
-		lu[idxMin] = lu[i-1]
-		lu[i-1] = temp
-	}
-}
-
 func cetakData(nCal int, li listPemilu) {
 	for i := 0; i < nCal; i++ {
 		if li[i].no != 0 {
@@ -211,6 +215,7 @@ func penambahan(nCal *int, li *listPemilu) {
 	fmt.Println("1. Yes")
 	fmt.Println("2. No")
 	fmt.Scan(&pili)
+	clearScreen()
 	for pili != 2 {
 		fmt.Println("Inputkan Nomor Urut, Nama Partai, Nama Calon. dan Jumlah Pemungutan Suara. (Minimum Jumlah Pemungutan Suara Adalah 1000")
 		fmt.Scan(&urut, &party, &name, &vote)
@@ -247,58 +252,69 @@ func pengubahan(nCal *int, li *listPemilu) {
 		cetakData(*nCal, *li)
 		fmt.Println("Pilih Nomor Urut Yang Ingin Diubah.")
 		fmt.Scan(&pil)
-		if li[pil-1].no == 0 {
+		clearScreen()
+		if pil <= 0 {
 			fmt.Println("Nomor Urut Tidak Valid!")
-		}
-		for pil1 != 5 && li[pil-1].no != 0 {
-			fmt.Println("Pilih Bagian Yang Ingin Diubah.")
-			fmt.Println("1. Nomor Urut")
-			fmt.Println("2. Partai")
-			fmt.Println("3. Nama Calon")
-			fmt.Println("4. Jumlah Pemungutan Suara")
-			fmt.Println("5. Exit")
-			fmt.Println("Pilih 1/2/3/4/5? ")
-			fmt.Scan(&pil1)
-			if pil1 == 1 {
-				fmt.Println("Tuliskan Nomor Urut Yang Baru.")
-				fmt.Scan(&nobaru)
-				if li[nobaru-1].no == 0 {
-					li[nobaru-1].no = nobaru
-					li[nobaru-1].partai = li[pil-1].partai
-					li[nobaru-1].nama = li[pil-1].nama
-					li[nobaru-1].vot = li[pil-1].vot
-					li[pil-1].no, li[pil-1].partai, li[pil-1].nama, li[pil-1].vot = 0, "", "", 0
-					pil = nobaru
-					if nobaru > *nCal {
-						*nCal = nobaru
+		} else if li[pil-1].no == 0 {
+			fmt.Println("Nomor Urut Tidak Valid!")
+		} else if pil > 0 {
+			for pil1 != 5 && li[pil-1].no != 0 && pil > 0 {
+				fmt.Println("Pilih Bagian Yang Ingin Diubah.")
+				fmt.Println("1. Nomor Urut")
+				fmt.Println("2. Partai")
+				fmt.Println("3. Nama Calon")
+				fmt.Println("4. Jumlah Pemungutan Suara")
+				fmt.Println("5. Exit")
+				fmt.Println("Pilih 1/2/3/4/5? ")
+				fmt.Scan(&pil1)
+				clearScreen()
+				if pil1 == 1 {
+					fmt.Println("Tuliskan Nomor Urut Yang Baru.")
+					fmt.Scan(&nobaru)
+					clearScreen()
+					if li[nobaru-1].no == 0 {
+						li[nobaru-1].no = nobaru
+						li[nobaru-1].partai = li[pil-1].partai
+						li[nobaru-1].nama = li[pil-1].nama
+						li[nobaru-1].vot = li[pil-1].vot
+						li[pil-1].no, li[pil-1].partai, li[pil-1].nama, li[pil-1].vot = 0, "", "", 0
+						pil = nobaru
+						if nobaru > *nCal {
+							*nCal = nobaru
+						}
+					} else if li[nobaru-1].no != 0 {
+						fmt.Println("Nomor Urut ini Sudah Terisi! Pengubahan Dibatalkan!")
 					}
-				} else if li[nobaru-1].no != 0 {
-					fmt.Println("Nomor Urut ini Sudah Terisi! Pengubahan Dibatalkan!")
+				} else if pil1 == 2 {
+					fmt.Println("Tuliskan Nama Partai Yang Baru.")
+					fmt.Scan(&li[pil-1].partai)
+					clearScreen()
+				} else if pil1 == 3 {
+					fmt.Println("Tuliskan Nama Calon Yang Baru.")
+					fmt.Scan(&li[pil-1].nama)
+					clearScreen()
+				} else if pil1 == 4 {
+					fmt.Println("Tuliskan Jumlah Pemungutan Suara Yang Baru.")
+					fmt.Scan(&li[pil-1].vot)
+					clearScreen()
+				} else if pil1 == 5 {
+					break
 				}
-			} else if pil1 == 2 {
-				fmt.Println("Tuliskan Nama Partai Yang Baru.")
-				fmt.Scan(&li[pil-1].partai)
-			} else if pil1 == 3 {
-				fmt.Println("Tuliskan Nama Calon Yang Baru.")
-				fmt.Scan(&li[pil-1].nama)
-			} else if pil1 == 4 {
-				fmt.Println("Tuliskan Jumlah Pemungutan Suara Yang Baru.")
-				fmt.Scan(&li[pil-1].vot)
-			} else if pil1 == 5 {
-				break
-			}
-			fmt.Println("Lanjut Dengan Pengubahan Calon Yang Dipilih?")
-			fmt.Println("1. Yes")
-			fmt.Println("2. No")
-			fmt.Scan(&pil3)
-			if pil3 == 2 {
-				break
+				fmt.Println("Lanjut Dengan Pengubahan Calon Yang Dipilih?")
+				fmt.Println("1. Yes")
+				fmt.Println("2. No")
+				fmt.Scan(&pil3)
+				clearScreen()
+				if pil3 == 2 {
+					break
+				}
 			}
 		}
 		fmt.Println("Lanjut Pengubahan?")
 		fmt.Println("1. Yes")
 		fmt.Println("2. No")
 		fmt.Scan(&pil2)
+		clearScreen()
 	}
 }
 
@@ -328,21 +344,70 @@ func penghapusan(nCal *int, li *listPemilu) {
 	}
 }
 
-func urutturunvoting(nCal int, li, lu *listPemilu) {
-	var pass, i int
+func urutvoting(nCal int, li, lu *listPemilu) {
+	var pass, i, p int
 	var temp caleg
 	for i = 0; i < nCal; i++ {
 		lu[i].no, lu[i].partai, lu[i].nama, lu[i].vot = li[i].no, li[i].partai, li[i].nama, li[i].vot
 	}
-	for pass < nCal {
-		i = pass
-		temp = lu[pass]
-		for i > 0 && temp.vot > lu[i-1].vot {
-			lu[i] = lu[i-1]
-			i--
+	fmt.Println("1. Menurun/2. Menaik? ")
+	fmt.Scan(&p)
+	if p == 1 {
+		for pass < nCal {
+			i = pass
+			temp = lu[pass]
+			for i > 0 && temp.vot > lu[i-1].vot {
+				lu[i] = lu[i-1]
+				i--
+			}
+			lu[i] = temp
+			pass++
 		}
-		lu[i] = temp
-		pass++
+	} else if p == 2 {
+		for pass < nCal {
+			i = pass
+			temp = lu[pass]
+			for i > 0 && temp.vot < lu[i-1].vot {
+				lu[i] = lu[i-1]
+				i--
+			}
+			lu[i] = temp
+			pass++
+		}
+	}
+}
+
+func sortpartai(nCal int, li, lu *listPemilu) {
+	for i := 0; i < nCal; i++ {
+		lu[i].no, lu[i].partai, lu[i].nama, lu[i].vot = li[i].no, li[i].partai, li[i].nama, li[i].vot
+	}
+	var p int
+	fmt.Println("1. Menurun/2. Menaik? ")
+	fmt.Scan(&p)
+	if p == 1 {
+		for i := 1; i < nCal; i++ {
+			idxMin := i - 1
+			for j := i; j < nCal; j++ {
+				if lu[idxMin].partai > lu[j].partai {
+					idxMin = j
+				}
+			}
+			temp := lu[idxMin]
+			lu[idxMin] = lu[i-1]
+			lu[i-1] = temp
+		}
+	} else if p == 2 {
+		for i := 1; i < nCal; i++ {
+			idxMin := i - 1
+			for j := i; j < nCal; j++ {
+				if lu[idxMin].partai < lu[j].partai {
+					idxMin = j
+				}
+			}
+			temp := lu[idxMin]
+			lu[idxMin] = lu[i-1]
+			lu[i-1] = temp
+		}
 	}
 }
 
