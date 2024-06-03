@@ -9,7 +9,7 @@ import (
 
 // konstanta NMAX = 100
 const NMAX int = 100
-
+const NMAX2 int = 1000
 
 // tipe bentukan struktur tCaleg dengan atribut nomor urut dan jumlah voting (integer), partai dan nama calon (string)
 type tCaleg struct {
@@ -17,9 +17,14 @@ type tCaleg struct {
 	partai, nama string
 }
 
+type tPemilih struct {
+	nama string
+	urut int
+}
+
 // Tipe alias listPemilu untuk array of tCaleg dengan ukuran NMAX
 type listPemilu [NMAX]tCaleg
-
+type namaPemilih [NMAX2]tPemilih
 
 func main() {
 	var milih int
@@ -27,9 +32,11 @@ func main() {
 	var cek bool
 	var lp listPemilu
 	var la listPemilu
+	var np namaPemilih
 	lp[0].no, lp[0].partai, lp[0].nama, lp[0].vot = 1, "NasDem", "Anies", 21432
 	lp[1].no, lp[1].partai, lp[1].nama, lp[1].vot = 2, "Gerindra", "Prabowo", 54362
 	lp[2].no, lp[2].partai, lp[2].nama, lp[2].vot = 3, "PDIP", "Ganjar", 14533
+	nPemilih := 0
 	nCaleg := 3
 	clearScreen()
 	for milih != 3 {
@@ -59,8 +66,10 @@ func main() {
 								menu_pencarian(&pil2)
 								if pil2 == 1 || pil2 == 2 {
 									pencarian(nCaleg, pil2, lp)
-								} else if pil2 == 3 {
+								} else if pil2 == 4 {
 									break
+								} else if pil2 == 3 {
+									pencarian_pemilih(nCaleg, nPemilih, lp, np)
 								}
 							}
 						} else if pil1 == 2 {
@@ -81,7 +90,7 @@ func main() {
 				} else if pil == 3 {
 					break
 				} else if pil == 2 {
-					menu_voting(&nCaleg, &lp)
+					menu_voting(&nCaleg, &nPemilih, &lp, &np)
 				}
 			}
 		} else if milih == 3 {
@@ -198,10 +207,11 @@ func menu_daftar(pil *int) {
 }
 
 // function untuk menampilkan menu voting/pemilih
-func menu_voting(nCal *int, li *listPemilu) {
+func menu_voting(nCal, nPem *int, li *listPemilu, pem *namaPemilih) {
 	var bln, tgl, jam, min, pil int
-	fmt.Println("Inputkan Bulan, Tanggal dan Waktu (Jam dan Menit) Anda Sekarang. (Voting Hanya Buka Pada Bulan Mei Tanggal 5-25 Pada Jam 8-18)")
-	fmt.Scan(&bln, &tgl, &jam, &min)
+	var name string
+	fmt.Println("Inputkan Waktu Anda Sekarang (Bulan, Tanggal dan Waktu (Jam dan Menit)) dan Nama Anda (Voting Hanya Buka Pada Bulan Mei Tanggal 5-25 Pada Jam 8-18)")
+	fmt.Scan(&bln, &tgl, &jam, &min, &name)
 	clearScreen()
 	if bln == 5 && tgl >= 5 && tgl <= 25 && jam >= 8 && jam <= 18 && min >= 0 && min <= 59 {
 		cetakData(*nCal, *li)
@@ -212,6 +222,9 @@ func menu_voting(nCal *int, li *listPemilu) {
 			fmt.Println("Voting Dibatalkan")
 		} else if li[pil-1].vot != 0 {
 			li[pil-1].vot++
+			pem[*nPem].nama = name
+			pem[*nPem].urut = pil
+			*nPem++
 			fmt.Println("Terimakasih Sudah Memvoting!")
 		} else if li[pil-1].vot == 0 {
 			fmt.Println("Nomor Urut Tidak Valid!")
@@ -540,15 +553,16 @@ func sortnama(nCal int, li, lu *listPemilu) {
 // function untuk menampilkan menu pencarian dan mengambil input
 func menu_pencarian(pil *int) {
 	*pil = 0
-	for *pil != 1 && *pil != 2 && *pil != 3 {
+	for *pil != 1 && *pil != 2 && *pil != 3 && *pil != 4 {
 		fmt.Println("MENU")
 		fmt.Println("1. Pencarian Berdasarkan Partai")
 		fmt.Println("2. Pencarian Berdasarkan Nama Calon")
-		fmt.Println("3. Exit.")
-		fmt.Println("Pilih 1/2/3? ")
+		fmt.Println("3. Pencarian Data Pemilih.")
+		fmt.Println("4. Exit")
+		fmt.Println("Pilih 1/2/3/4? ")
 		fmt.Scan(&*pil)
 		clearScreen()
-		if *pil != 1 && *pil != 2 && *pil != 3 {
+		if *pil != 1 && *pil != 2 && *pil != 3 && *pil != 4 {
 			fmt.Println("Jawaban Tidak Valid!")
 		}
 	}
@@ -586,6 +600,34 @@ func pencarian(nCal, p int, li listPemilu) {
 	} else {
 		fmt.Println("Data Ditemukan!")
 		fmt.Println(li[cek].no, li[cek].partai, li[cek].nama, li[cek].vot)
+	}
+}
+
+func pencarian_pemilih(nCal, nPem int, li listPemilu, pem namaPemilih) {
+	var x int
+	var cek, cek2 bool
+	fmt.Println("Inputkan Nomor Urut Yang Ingin Dicari!")
+	fmt.Scan(&x)
+	clearScreen()
+	for i := 0; i < nCal; i++ {
+		if li[i].no == x {
+			cek = true
+		}
+	}
+	if cek == true {
+		fmt.Println("Pemilih Yang Memvoting Nomor Urut Tersebut :")
+		for j := 0; j < nPem; j++ {
+			if pem[j].urut == x {
+				fmt.Println(pem[j].nama)
+				cek2 = true
+			}
+		}
+		if cek2 == false {
+			fmt.Println("Data Kosong!")
+		}
+		fmt.Println("---------------------")
+	} else if cek == false {
+		fmt.Println("Nomor Urut Tidak Ditemukan!")
 	}
 }
 
