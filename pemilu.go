@@ -52,19 +52,26 @@ func main() {
 		fmt.Println("0. Keluar")
 		fmt.Print("Pilihan: ")
 		fmt.Scan(&pilih)
-		clearScreen()
 
 		switch pilih {
 		case 1:
 			menu_voting(&nCaleg, &nPemilih, &lp, &np)
 		case 2:
+			clearScreen()
 			cetakData(nCaleg, lp)
+			pause()
 		case 3:
+			clearScreen()
 			pencarian(nCaleg, 1, lp)
+			pause()
 		case 4:
+			clearScreen()
 			pencarian(nCaleg, 2, lp)
+			pause()
 		case 5:
+			clearScreen()
 			pencarian_pemilih(nCaleg, nPemilih, lp, np)
+			pause()
 		case 6:
 			penambahan(&nCaleg, &lp)
 		case 7:
@@ -73,13 +80,19 @@ func main() {
 			penghapusan(&nCaleg, &lp)
 		case 9:
 			sortpartai(nCaleg, &lp, &la)
+			clearScreen()
 			cetakData(nCaleg, la)
+			pause()
 		case 10:
 			sortnama(nCaleg, &lp, &la)
+			clearScreen()
 			cetakData(nCaleg, la)
+			pause()
 		case 11:
 			urutvoting(nCaleg, &lp, &la)
+			clearScreen()
 			cetakData(nCaleg, la)
+			pause()
 		case 0:
 			fmt.Println("Terima kasih sudah menggunakan program ini!")
 			return
@@ -92,14 +105,21 @@ func main() {
 // -------------------- UTILS --------------------
 
 func clearScreen() {
-	cmd := exec.Command("cmd", "/c", "cls") // untuk Windows
+	cmd := exec.Command("cmd", "/c", "cls") // Windows
 	cmd.Stdout = os.Stdout
 	cmd.Run()
+}
+
+func pause() {
+	fmt.Println("\nTekan ENTER untuk kembali ke menu...")
+	fmt.Scanln()
+	fmt.Scanln()
 }
 
 // -------------------- VOTING & DISPLAY --------------------
 
 func menu_voting(nCaleg, nPemilih *int, lp *listPemilu, np *namaPemilih) {
+	clearScreen()
 	var (
 		nama    string
 		no_urut int
@@ -108,17 +128,17 @@ func menu_voting(nCaleg, nPemilih *int, lp *listPemilu, np *namaPemilih) {
 
 	fmt.Print("Masukkan Nama Anda: ")
 	fmt.Scan(&nama)
-	clearScreen()
 
 	// cek apakah sudah pernah memilih
 	for i := 0; i < *nPemilih; i++ {
 		if np[i].nama == nama {
 			fmt.Println("Anda sudah pernah melakukan voting!")
+			pause()
 			return
 		}
 	}
 
-	fmt.Println("Daftar Calon:")
+	fmt.Println("\nDaftar Calon:")
 	for i := 0; i < *nCaleg; i++ {
 		fmt.Printf("%d. %s (%s)\n", lp[i].no, lp[i].nama, lp[i].partai)
 	}
@@ -127,7 +147,6 @@ func menu_voting(nCaleg, nPemilih *int, lp *listPemilu, np *namaPemilih) {
 	for !valid {
 		fmt.Print("Pilih nomor urut caleg: ")
 		fmt.Scan(&no_urut)
-		clearScreen()
 		for i := 0; i < *nCaleg; i++ {
 			if lp[i].no == no_urut {
 				lp[i].vot++
@@ -143,6 +162,7 @@ func menu_voting(nCaleg, nPemilih *int, lp *listPemilu, np *namaPemilih) {
 			fmt.Println("Nomor urut tidak valid!")
 		}
 	}
+	pause()
 }
 
 func cetakData(nCaleg int, lp listPemilu) {
@@ -153,17 +173,12 @@ func cetakData(nCaleg int, lp listPemilu) {
 		fmt.Printf("%d. %-10s %-10s [Suara: %d]\n", lp[i].no, lp[i].nama, lp[i].partai, lp[i].vot)
 	}
 	fmt.Println("====================================")
-	fmt.Println("Tekan ENTER untuk kembali...")
-	fmt.Scanln()
-	fmt.Scanln()
-	clearScreen()
 }
 
 func pencarian(nCaleg, pilihan int, lp listPemilu) {
 	var cari string
 	fmt.Print("Masukkan kata kunci pencarian: ")
 	fmt.Scan(&cari)
-	clearScreen()
 
 	fmt.Println("Hasil Pencarian:")
 	ditemukan := false
@@ -176,17 +191,12 @@ func pencarian(nCaleg, pilihan int, lp listPemilu) {
 	if !ditemukan {
 		fmt.Println("Data tidak ditemukan!")
 	}
-	fmt.Println("Tekan ENTER untuk kembali...")
-	fmt.Scanln()
-	fmt.Scanln()
-	clearScreen()
 }
 
 func pencarian_pemilih(nCaleg, nPemilih int, lp listPemilu, np namaPemilih) {
 	var nama string
 	fmt.Print("Masukkan nama pemilih: ")
 	fmt.Scan(&nama)
-	clearScreen()
 
 	for i := 0; i < nPemilih; i++ {
 		if np[i].nama == nama {
@@ -194,31 +204,23 @@ func pencarian_pemilih(nCaleg, nPemilih int, lp listPemilu, np namaPemilih) {
 			for j := 0; j < nCaleg; j++ {
 				if lp[j].no == no {
 					fmt.Printf("Pemilih %s memilih %s (%s)\n", nama, lp[j].nama, lp[j].partai)
-					fmt.Println("Tekan ENTER untuk kembali...")
-					fmt.Scanln()
-					fmt.Scanln()
-					clearScreen()
 					return
 				}
 			}
 		}
 	}
 	fmt.Println("Data pemilih tidak ditemukan!")
-	fmt.Println("Tekan ENTER untuk kembali...")
-	fmt.Scanln()
-	fmt.Scanln()
-	clearScreen()
 }
 
 // -------------------- CRUD --------------------
 
 func penambahan(nCaleg *int, lp *listPemilu) {
+	clearScreen()
 	var nama, partai string
 	fmt.Print("Masukkan Nama Caleg: ")
 	fmt.Scan(&nama)
 	fmt.Print("Masukkan Partai: ")
 	fmt.Scan(&partai)
-	clearScreen()
 
 	*nCaleg++
 	lp[*nCaleg-1].no = *nCaleg
@@ -227,13 +229,14 @@ func penambahan(nCaleg *int, lp *listPemilu) {
 	lp[*nCaleg-1].vot = 0
 
 	fmt.Println("Caleg berhasil ditambahkan!")
+	pause()
 }
 
 func pengubahan(nCaleg *int, lp *listPemilu) {
+	clearScreen()
 	var no int
 	fmt.Print("Masukkan nomor urut caleg yang ingin diubah: ")
 	fmt.Scan(&no)
-	clearScreen()
 
 	for i := 0; i < *nCaleg; i++ {
 		if lp[i].no == no {
@@ -241,19 +244,20 @@ func pengubahan(nCaleg *int, lp *listPemilu) {
 			fmt.Scan(&lp[i].nama)
 			fmt.Print("Masukkan partai baru: ")
 			fmt.Scan(&lp[i].partai)
-			clearScreen()
 			fmt.Println("Data berhasil diubah!")
+			pause()
 			return
 		}
 	}
 	fmt.Println("Caleg tidak ditemukan!")
+	pause()
 }
 
 func penghapusan(nCaleg *int, lp *listPemilu) {
+	clearScreen()
 	var no int
 	fmt.Print("Masukkan nomor urut caleg yang ingin dihapus: ")
 	fmt.Scan(&no)
-	clearScreen()
 
 	for i := 0; i < *nCaleg; i++ {
 		if lp[i].no == no {
@@ -263,10 +267,12 @@ func penghapusan(nCaleg *int, lp *listPemilu) {
 			}
 			*nCaleg--
 			fmt.Println("Caleg berhasil dihapus!")
+			pause()
 			return
 		}
 	}
 	fmt.Println("Caleg tidak ditemukan!")
+	pause()
 }
 
 // -------------------- SORTING --------------------
