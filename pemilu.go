@@ -34,6 +34,7 @@ func main() {
 	)
 
 	for {
+		clearScreen()
 		fmt.Println("====================================")
 		fmt.Println("SISTEM PEMILU SEDERHANA")
 		fmt.Println("====================================")
@@ -51,6 +52,7 @@ func main() {
 		fmt.Println("0. Keluar")
 		fmt.Print("Pilihan: ")
 		fmt.Scan(&pilih)
+		clearScreen()
 
 		switch pilih {
 		case 1:
@@ -90,7 +92,7 @@ func main() {
 // -------------------- UTILS --------------------
 
 func clearScreen() {
-	cmd := exec.Command("cmd", "/c", "cls")
+	cmd := exec.Command("cmd", "/c", "cls") // untuk Windows
 	cmd.Stdout = os.Stdout
 	cmd.Run()
 }
@@ -106,6 +108,7 @@ func menu_voting(nCaleg, nPemilih *int, lp *listPemilu, np *namaPemilih) {
 
 	fmt.Print("Masukkan Nama Anda: ")
 	fmt.Scan(&nama)
+	clearScreen()
 
 	// cek apakah sudah pernah memilih
 	for i := 0; i < *nPemilih; i++ {
@@ -124,6 +127,7 @@ func menu_voting(nCaleg, nPemilih *int, lp *listPemilu, np *namaPemilih) {
 	for !valid {
 		fmt.Print("Pilih nomor urut caleg: ")
 		fmt.Scan(&no_urut)
+		clearScreen()
 		for i := 0; i < *nCaleg; i++ {
 			if lp[i].no == no_urut {
 				lp[i].vot++
@@ -139,7 +143,6 @@ func menu_voting(nCaleg, nPemilih *int, lp *listPemilu, np *namaPemilih) {
 			fmt.Println("Nomor urut tidak valid!")
 		}
 	}
-	clearScreen()
 }
 
 func cetakData(nCaleg int, lp listPemilu) {
@@ -150,12 +153,17 @@ func cetakData(nCaleg int, lp listPemilu) {
 		fmt.Printf("%d. %-10s %-10s [Suara: %d]\n", lp[i].no, lp[i].nama, lp[i].partai, lp[i].vot)
 	}
 	fmt.Println("====================================")
+	fmt.Println("Tekan ENTER untuk kembali...")
+	fmt.Scanln()
+	fmt.Scanln()
+	clearScreen()
 }
 
 func pencarian(nCaleg, pilihan int, lp listPemilu) {
 	var cari string
 	fmt.Print("Masukkan kata kunci pencarian: ")
 	fmt.Scan(&cari)
+	clearScreen()
 
 	fmt.Println("Hasil Pencarian:")
 	ditemukan := false
@@ -168,12 +176,17 @@ func pencarian(nCaleg, pilihan int, lp listPemilu) {
 	if !ditemukan {
 		fmt.Println("Data tidak ditemukan!")
 	}
+	fmt.Println("Tekan ENTER untuk kembali...")
+	fmt.Scanln()
+	fmt.Scanln()
+	clearScreen()
 }
 
 func pencarian_pemilih(nCaleg, nPemilih int, lp listPemilu, np namaPemilih) {
 	var nama string
 	fmt.Print("Masukkan nama pemilih: ")
 	fmt.Scan(&nama)
+	clearScreen()
 
 	for i := 0; i < nPemilih; i++ {
 		if np[i].nama == nama {
@@ -181,12 +194,20 @@ func pencarian_pemilih(nCaleg, nPemilih int, lp listPemilu, np namaPemilih) {
 			for j := 0; j < nCaleg; j++ {
 				if lp[j].no == no {
 					fmt.Printf("Pemilih %s memilih %s (%s)\n", nama, lp[j].nama, lp[j].partai)
+					fmt.Println("Tekan ENTER untuk kembali...")
+					fmt.Scanln()
+					fmt.Scanln()
+					clearScreen()
 					return
 				}
 			}
 		}
 	}
 	fmt.Println("Data pemilih tidak ditemukan!")
+	fmt.Println("Tekan ENTER untuk kembali...")
+	fmt.Scanln()
+	fmt.Scanln()
+	clearScreen()
 }
 
 // -------------------- CRUD --------------------
@@ -197,6 +218,7 @@ func penambahan(nCaleg *int, lp *listPemilu) {
 	fmt.Scan(&nama)
 	fmt.Print("Masukkan Partai: ")
 	fmt.Scan(&partai)
+	clearScreen()
 
 	*nCaleg++
 	lp[*nCaleg-1].no = *nCaleg
@@ -205,13 +227,13 @@ func penambahan(nCaleg *int, lp *listPemilu) {
 	lp[*nCaleg-1].vot = 0
 
 	fmt.Println("Caleg berhasil ditambahkan!")
-	clearScreen()
 }
 
 func pengubahan(nCaleg *int, lp *listPemilu) {
 	var no int
 	fmt.Print("Masukkan nomor urut caleg yang ingin diubah: ")
 	fmt.Scan(&no)
+	clearScreen()
 
 	for i := 0; i < *nCaleg; i++ {
 		if lp[i].no == no {
@@ -219,8 +241,8 @@ func pengubahan(nCaleg *int, lp *listPemilu) {
 			fmt.Scan(&lp[i].nama)
 			fmt.Print("Masukkan partai baru: ")
 			fmt.Scan(&lp[i].partai)
-			fmt.Println("Data berhasil diubah!")
 			clearScreen()
+			fmt.Println("Data berhasil diubah!")
 			return
 		}
 	}
@@ -231,6 +253,7 @@ func penghapusan(nCaleg *int, lp *listPemilu) {
 	var no int
 	fmt.Print("Masukkan nomor urut caleg yang ingin dihapus: ")
 	fmt.Scan(&no)
+	clearScreen()
 
 	for i := 0; i < *nCaleg; i++ {
 		if lp[i].no == no {
@@ -240,7 +263,6 @@ func penghapusan(nCaleg *int, lp *listPemilu) {
 			}
 			*nCaleg--
 			fmt.Println("Caleg berhasil dihapus!")
-			clearScreen()
 			return
 		}
 	}
